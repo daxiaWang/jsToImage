@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="capture" style="padding: 10px; background: #f5da55">
+        <h4 style="color: #000; ">Hello world!</h4>
+        <form action="">
+            nihao:<input type="text">
+        </form>
+    </div>
+    <button id="savePic">savePic</button>
+</body>
+<script src="./jquery.min.js"></script>
+<script src="./html2canvas.js"></script>
+<script src="./canvas2image.js" type="text/javascript" charset="utf-8" async defer></script>
+<script>
+    html2canvas(document.querySelector("#capture")).then(canvas => {
+        document.body.appendChild(canvas)
+    });
+    // 点击转成图片
+
+    $('#savePic').click(function() {
+        savePic()
+    })
+
+    function savePic() {
+        var oCanvas = document.getElementById("canvas");
+        // 调用html2canvas插件
+        html2canvas(oCanvas).then(function(canvas) {
+                // canvas宽度
+                var canvasWidth = canvas.width;
+                // canvas高度
+                var canvasHeight = canvas.height;
+                // 控制台查看绘制区域的宽高
+                console.log(canvasWidth + "    " + canvasHeight);
+                Canvas2Image.saveAsImage(canvas, "png", "image1");
+            })
+            // var oCanvas = document.getElementById("canvas");
+            // console.log("oCanvas", oCanvas)
+            // oCanvas.width = 420
+            // oCanvas.height = 420
+            // Canvas2Image.saveAsImage(oCanvas, "png", "image1");
+    }
+
+    // let image = new Image();
+    // image.src = canvas.toDataURL({
+    //     format: 'image/png',
+    //     quality: 1,
+    //     width: 14000,
+    //     height: 4000
+    // });
+    // var url = image.src.replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+    // return image;
+    // window.open(url);
+</script>
+
+</html>

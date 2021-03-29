@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=320,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>实现HTML转图片</title>
+    <style type="text/css" media="screen">
+        .bg {
+            width: 100%;
+            min-height: 100%;
+            height: 100vh;
+            background-color: #a799ac;
+            text-align: center;
+        }
+        
+        .text {
+            width: 50%;
+            margin-top: 20%;
+            height: 25px;
+            border: 1px solid #b7c092;
+            border-radius: 10px;
+            outline: none;
+        }
+        
+        .save,
+        .picture {
+            border-radius: 10px;
+            border: none;
+            width: 60px;
+            padding: 0;
+            height: 25px;
+            background: #9cd8b1;
+            outline: none;
+        }
+        
+        .title {
+            /* margin-top: 100px; */
+        }
+        
+        .need {
+            /* background: url(20.jpg) no-repeat; */
+            background-size: 400px;
+            background: linear-gradient(#3793b6, #c993d3);
+        }
+        
+        img {
+            margin-top: 50px;
+            width: 100%;
+            height: 200px;
+        }
+    </style>
+
+</head>
+
+<body style="padding: 0;margin: 0;">
+    <div class="bg">
+        <input type="input" name="姓名" class="text" placeholder="输入姓名">
+        <button type="button" class="save">确认</button>
+        <button type="button" class="picture">生成图片</button>
+        <div class="need" style="height: 200px;width: 400px">
+            <p class="title" style="color: white">hello</p>
+            <p class="area" style="color: white">欢迎，这里是你需要截取到的区域</p>
+        </div>
+    </div>
+
+</body>
+<script src="./jquery.min.js"></script>
+<script src="./html2canvas.js"></script>
+<script src="./canvas2image.js" type="text/javascript" charset="utf-8" async defer></script>
+<script>
+    var text = $(".text").val();
+    var info = $(".title");
+    var save = $(".save");
+    let w = $(window).width(); //图片宽度
+    let h = $(window).height(); //图片高度
+    console.log(w + "    " + h);
+    save.click(function(e) {
+        // 获取输入框内容
+        var text = $(".text").val();
+        // 控制台输出，一般用于测试时开效果，实际项目不需要
+        console.log(text);
+        // 非空判断 
+        if (!text) return;
+        else // 不为空则加载到页面
+            info.text(text);
+    });
+    var need = $(".need").get(0); //将jQuery对象转换为dom对象
+    function getOS() { // 获取当前操作系统
+        var os;
+        if (navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Linux') > -1) {
+            os = 'Android';
+        } else if (navigator.userAgent.indexOf('iPhone') > -1 || navigator.userAgent.indexOf('iPad') > -1) {
+            os = 'iOS';
+        } else if (navigator.userAgent.indexOf('Windows Phone') > -1) {
+            os = 'WP';
+        } else {
+            os = 'Others';
+        }
+        return os;
+    }
+    console.log("操作系统" + getOS());
+
+    // 点击转成canvas，最后用于生成图片
+    $('.picture').click(function(e) {
+
+        // 调用html2canvas插件
+        html2canvas(need).then(function(canvas) {
+            // canvas宽度
+            var canvasWidth = canvas.width;
+            // canvas高度
+            var canvasHeight = canvas.height;
+            // 控制台查看绘制区域的宽高
+            console.log(canvasWidth + "    " + canvasHeight);
+
+            // 渲染canvas，这个时候将我们用于生成图片的区域隐藏
+            $(".need").hide();
+            // 下面注释内容为测试内容，测试时可以去掉注释，方便查看生成的canvas区域
+            // $(".need").after(canvas);
+
+            // 调用Canvas2Image插件
+            let w = $(window).width(); //图片宽度
+            // let h = $(window).height(); //图片高度
+            // 这里因为我们生成图片区域高度为400，所以这里我们直接指定
+            let h = 400;
+
+            // 将canvas转为图片
+            var img = Canvas2Image.convertToImage(canvas, canvasWidth, canvasHeight);
+            // 渲染图片，并且加到页面中查看效果
+            $(".need").after(img);
+
+            // 保存
+            let type = "png"; //图片类型
+            let f = "DNF"; //图片文件名，自定义名称
+            // w = (w === '') ? canvasWidth : w; //判断输入宽高是否为空，为空时保持原来的值
+            // h = (h === '') ? canvasHeight : h;
+
+            // 这里的判断用于区分移动端和pc端
+            if (getOS() == "Others") {
+                // 调用Canvas2Image插件
+                Canvas2Image.saveAsImage(canvas, w, h, type, f);
+            }
+        });
+    });
+</script>
+
+</html>
